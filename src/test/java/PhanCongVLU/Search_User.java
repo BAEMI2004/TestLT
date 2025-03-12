@@ -153,6 +153,112 @@ public class Search_User {
         Thread.sleep(1000); // Chờ hệ thống cập nhật lại danh sách
     }
 
+    @Test(priority=4)
+    public void TC_SU_05() throws InterruptedException {
+        // Truy cập trang quản lý người dùng
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='/Phancong02/User']"))).click();
+
+        // Nhập từ khóa tìm kiếm
+        WebElement searchBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='tblUser_filter']/label/input")));
+        searchBox.sendKeys("Võ Minh Tân");
+
+        // Chờ xem kết quả có cập nhật ngay không
+        Thread.sleep(2000);
+
+        // Xác minh kết quả hiển thị ngay lập tức
+        List<WebElement> searchResults = driver.findElements(By.xpath("//table[@id='tblUser']//td[contains(text(), 'Võ Minh Tân')]"));
+        if (!searchResults.isEmpty()) {
+            System.out.println("✅ TC_SU_05: Test Passed - Kết quả cập nhật ngay khi nhập mà không cần nhấn nút tìm kiếm.");
+        } else {
+            System.out.println("❌ TC_SU_05: Test Failed - Kết quả không cập nhật tức thời.");
+        }
+
+        Assert.assertFalse(searchResults.isEmpty(), "Kết quả tìm kiếm không được cập nhật ngay lập tức.");
+
+        // 🔥 XÓA DỮ LIỆU TRONG Ô TÌM KIẾM SAU KHI TEST
+        searchBox.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE);
+        Thread.sleep(1000);
+    }
+    @Test(priority=5)
+    public void TC_SU_06() throws InterruptedException {
+        // Truy cập trang quản lý người dùng
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='/Phancong02/User']"))).click();
+
+        // Nhập khoảng trắng vào ô tìm kiếm
+        WebElement searchBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='tblUser_filter']/label/input")));
+        searchBox.sendKeys("   "); // Nhập ba khoảng trắng
+
+        // Chờ xem kết quả có cập nhật không
+        Thread.sleep(2000);
+
+        try {
+            // Kiểm tra xem có thông báo "Không tìm thấy kết quả" không
+            WebElement noResultMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Không tìm thấy kết quả')]")));
+            Assert.assertTrue(noResultMessage.isDisplayed(), "Thông báo 'Không tìm thấy kết quả' không hiển thị.");
+            System.out.println("✅ TC_SU_06: Test Passed - Hệ thống hiển thị 'Không tìm thấy kết quả' khi nhập khoảng trắng.");
+        } catch (TimeoutException e) {
+            System.out.println("❌ TC_SU_06: Test Failed - Kết quả không hợp lệ khi nhập khoảng trắng.");
+            Assert.fail("Không hiển thị thông báo 'Không tìm thấy kết quả' khi nhập khoảng trắng.");
+        }
+
+        // 🔥 XÓA DỮ LIỆU TRONG Ô TÌM KIẾM SAU KHI TEST
+        searchBox.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE);
+        Thread.sleep(1000);
+    }
+    @Test(priority=6)
+    public void TC_SU_07() throws InterruptedException {
+        // Truy cập trang quản lý người dùng
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='/Phancong02/User']"))).click();
+
+        // Nhập 1 ký tự vào ô tìm kiếm
+        WebElement searchBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='tblUser_filter']/label/input")));
+        searchBox.sendKeys("a");
+
+        // Chờ xem kết quả có cập nhật không
+        Thread.sleep(2000);
+
+        // Kiểm tra xem có kết quả hiển thị không
+        List<WebElement> searchResults = driver.findElements(By.xpath("//table[@id='tblUser']//td[contains(text(), 'a')]"));
+        if (!searchResults.isEmpty()) {
+            System.out.println("✅ TC_SU_07: Test Passed - Hệ thống hiển thị danh sách chứa ký tự tìm kiếm.");
+        } else {
+            System.out.println("❌ TC_SU_07: Test Failed - Không có kết quả phù hợp khi nhập 1 ký tự.");
+        }
+
+        Assert.assertFalse(searchResults.isEmpty(), "Hệ thống không hiển thị kết quả chứa ký tự tìm kiếm.");
+
+        // 🔥 XÓA DỮ LIỆU TRONG Ô TÌM KIẾM SAU KHI TEST
+        searchBox.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE);
+        Thread.sleep(1000);
+    }
+    @Test(priority=7)
+    public void TC_SU_08() throws InterruptedException {
+        // Truy cập trang quản lý người dùng
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='/Phancong02/User']"))).click();
+
+        // Nhập số vào ô tìm kiếm
+        WebElement searchBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='tblUser_filter']/label/input")));
+        searchBox.sendKeys("12345");
+
+        // Chờ xem kết quả có cập nhật không
+        Thread.sleep(2000);
+
+        // Kiểm tra xem có kết quả hiển thị không
+        List<WebElement> searchResults = driver.findElements(By.xpath("//table[@id='tblUser']//td[contains(text(), '12345')]"));
+        if (!searchResults.isEmpty()) {
+            System.out.println("✅ TC_SU_08: Test Passed - Hệ thống hiển thị danh sách chứa số tìm kiếm.");
+        } else {
+            System.out.println("❌ TC_SU_08: Test Failed - Không có kết quả phù hợp khi nhập số.");
+        }
+
+        Assert.assertFalse(searchResults.isEmpty(), "Hệ thống không hiển thị kết quả chứa số tìm kiếm.");
+
+        // 🔥 XÓA DỮ LIỆU TRONG Ô TÌM KIẾM SAU KHI TEST
+        searchBox.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE);
+        Thread.sleep(1000);
+    }
+
+
 //    @AfterClass
 //    public void tearDown() {
 //        if (driver != null) {
