@@ -89,6 +89,7 @@ public class Search_User {
             Assert.fail("Không tìm thấy kết quả nhưng cũng không hiển thị thông báo.");
         }
     }
+
     @Test(priority=2)
     public void TC_SU_03() throws InterruptedException {
         // Truy cập trang quản lý người dùng
