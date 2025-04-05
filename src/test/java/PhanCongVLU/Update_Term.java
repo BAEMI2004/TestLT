@@ -12,6 +12,9 @@ import org.testng.annotations.Test;
 
 import java.time.Duration;
 
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertEquals;
+
 public class Update_Term {
     private WebDriver driver;
     private WebDriverWait wait;
@@ -101,7 +104,8 @@ public class Update_Term {
 
         // Lấy nội dung của popup
         String popupText = popupElement.getText();
-        System.out.println("Nội dung popup: " + popupText);
+        assertEquals(popupText.trim(), "Cập nhật thành công!",popupText);
+        System.out.println( popupText);
 
     }
     @Test(priority=1)
@@ -121,6 +125,7 @@ public class Update_Term {
         WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("start_date-error")));
         String errorText = errorMessage.getText();
         System.out.println( errorText);
+        assertEquals(errorText.trim(), "Bạn chưa chọn ngày bắt đầu",errorText);
     }
     @Test(priority=2)
     public void TC_UT_03() {
@@ -150,6 +155,7 @@ public class Update_Term {
         WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("end_year-error")));
         String errorText = errorMessage.getText();
         System.out.println( errorText);
+        assertEquals(errorText.trim(), "Năm kết thúc không thể nhỏ hơn năm bắt đầu!",errorText);
     }
     @Test(priority=3)
     public void TC_UT_04() {
@@ -169,6 +175,7 @@ public class Update_Term {
         WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("start_week-error")));// lưu ý khi chạy tới phải nhấp ra ra bên cạnh 1 click
         String errorText = errorMessage.getText();
         System.out.println( errorText);
+        assertEquals(errorText.trim(), "Vui lòng nhật nhỏ hơn hoặc bằng 52",errorText);
     }
 
     @Test(priority=4)
@@ -210,6 +217,7 @@ public class Update_Term {
         // Lấy nội dung của popup
         String popupText = popupElement.getText();
         System.out.println(popupText);
+        assertEquals(popupText.trim(), "Nhập năm bắt đầu nhỏ hơn năm kết thúc!",popupText);
 
     }
     @Test(priority=5)
@@ -238,8 +246,6 @@ public class Update_Term {
         js.executeScript("arguments[0].value = '01/02/2028';", startDate);
 
 
-
-
         // Nhấn nút "Lưu"
         WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"term-form\"]/div[7]/button[2]")));
         saveButton.click();
@@ -251,6 +257,7 @@ public class Update_Term {
         // Lấy nội dung của popup
         String popupText = popupElement.getText();
         System.out.println(popupText);
+        assertEquals(popupText.trim(), "Nhập ngày bắt đầu nằm trong khoảng từ năm bắt đầu đến năm kết thúc!",popupText);
 
     }
     @Test(priority=6)
@@ -270,6 +277,7 @@ public class Update_Term {
         WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("max_class-error"))); // lưu ý khi chạy tới phải nhấp ra ra bên cạnh 1 click
         String errorText = errorMessage.getText();
         System.out.println( errorText);
+        assertEquals(errorText.trim(), "Vui lòng nhập nhỏ hơn hoặc bằng 30",errorText);
     }
 
 
