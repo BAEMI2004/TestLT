@@ -1,0 +1,23 @@
+{
+  "testCases": [
+    {
+      "startYear": "2019",
+      "endYear": "2023",
+      "startWeek": "1",
+      "startDate": "24/03/2020",
+      "maxLesson": "15",
+      "maxClass": "30",
+      "expectedMessage": "Cập nhật thành công!"
+    },
+    {
+      "startYear": "2029",
+      "endYear": "2024",
+      "startWeek": "53",
+      "startDate": "01/02/2024",
+      "maxLesson": "10",
+      "maxClass": "25",
+      "expectedMessage": "Năm kết thúc không thể nhỏ hơn năm bắt đầu!"
+    }
+
+  ]
+}
