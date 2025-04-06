@@ -1,4 +1,5 @@
 package PhanCongVLU;
+
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.*;
@@ -7,6 +8,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.time.Duration;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public class UT_json {
     private WebDriver driver;
@@ -30,6 +34,7 @@ public class UT_json {
     public void setUp() {
         options = new ChromeOptions();
         options.addArguments("--ignore-certificate-errors");
+
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -42,7 +47,7 @@ public class UT_json {
     }
 
     public void login() {
-        WebElement loginButton = new WebDriverWait(driver, Duration.ofSeconds(45))
+        WebElement loginButton = new WebDriverWait(driver, Duration.ofSeconds(60))
                 .until(ExpectedConditions.elementToBeClickable(By.id("OpenIdConnect")));
         loginButton.click();
 
@@ -68,6 +73,7 @@ public class UT_json {
         for (int i = 0; i < testCasesArray.size(); i++) {
             JSONObject testCase = (JSONObject) testCasesArray.get(i);
             data[i] = new Object[] {
+                    testCase.get("testCaseName"),
                     testCase.get("startYear"),
                     testCase.get("endYear"),
                     testCase.get("startWeek"),
@@ -82,7 +88,9 @@ public class UT_json {
     }
 
     @Test(dataProvider = "termData", priority = 0)
-    public void TC_UT_01(String startYear, String endYear, String startWeek, String startDate, String maxLesson, String maxClass, String expectedMessage) {
+    public void TC_UT_01_Success(String testCaseName, String startYear, String endYear, String startWeek, String startDate, String maxLesson, String maxClass, String expectedMessage) {
+        System.out.println("Executing Test Case: " + testCaseName);
+
         // Nhấp vào menu "Học kỳ và Ngành"
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"main-menu-navigation\"]/li[2]/a/span"))).click();
 
@@ -126,7 +134,7 @@ public class UT_json {
         WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"term-form\"]/div[7]/button[2]")));
         saveButton.click();
 
-        // Kiểm tra thông báo
+        // Kiểm tra thông báo thành công
         FluentWait<WebDriver> fluentWait = new FluentWait<> (driver)
                 .withTimeout(Duration.ofSeconds(30))
                 .pollingEvery(Duration.ofMillis(500))
@@ -136,5 +144,69 @@ public class UT_json {
         String popupText = popupElement.getText();
         System.out.println(popupText);
         Assert.assertEquals(popupText.trim(), expectedMessage, popupText);
+    }
+
+    @Test(dataProvider = "termData", priority = 1)
+    public void TC_UT_02_Error(String testCaseName, String startYear, String endYear, String startWeek, String startDate, String maxLesson, String maxClass, String expectedMessage) {
+        System.out.println("Executing Test Case: " + testCaseName);
+
+        // Nhấp vào menu "Học kỳ và Ngành"
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"main-menu-navigation\"]/li[2]/a/span"))).click();
+
+        // Nhấp vào nút chỉnh sửa học kỳ
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"tblTerm\"]/tbody/tr[1]/td[9]/a[1]"))).click();
+
+        // Chọn năm bắt đầu
+        WebElement startYearDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='select2-start_year-container']")));
+        startYearDropdown.click();
+        WebElement startYearOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[contains(text(),'" + startYear + "')]")));
+        startYearOption.click();
+
+        // Chọn năm kết thúc
+        WebElement endYearDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='select2-end_year-container']")));
+        endYearDropdown.click();
+        WebElement endYearOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//li[contains(text(),'" + endYear + "')]")));
+        endYearOption.click();
+
+        // Chọn tuần bắt đầu
+        WebElement startWeekOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"start_week\"]")));
+        startWeekOption.click();
+        startWeekOption.clear(); // Xóa nội dung hiện tại
+        startWeekOption.sendKeys(startWeek);
+
+        // Chọn ngày bắt đầu
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        WebElement startDateElement = driver.findElement(By.xpath("//*[@id=\"term-form\"]/div[5]/input[2]"));
+        js.executeScript("arguments[0].value = '" + startDate + "';", startDateElement);
+
+        WebElement tietToiDa = wait.until(ExpectedConditions.elementToBeClickable(By.id("max_lesson")));
+        tietToiDa.click();
+        tietToiDa.clear();
+        tietToiDa.sendKeys(maxLesson);
+
+        WebElement lopToiDa = wait.until(ExpectedConditions.elementToBeClickable(By.id("max_class")));
+        lopToiDa.click();
+        lopToiDa.clear();
+        lopToiDa.sendKeys(maxClass);
+
+        // Nhấn nút "Lưu"
+        WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"term-form\"]/div[7]/button[2]")));
+        saveButton.click();
+
+        // Kiểm tra thông báo lỗi
+        FluentWait<WebDriver> fluentWait = new FluentWait<> (driver)
+                .withTimeout(Duration.ofSeconds(30))
+                .pollingEvery(Duration.ofMillis(500))
+                .ignoring(NoSuchElementException.class);
+
+        WebElement popupElement = fluentWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("end_year-error")));
+        String popupText = popupElement.getText();
+        System.out.println(popupText);
+        Assert.assertEquals(popupText.trim(), expectedMessage, popupText);
+    }
+
+    @AfterClass
+    public void tearDown() {
+        driver.quit();
     }
 }
